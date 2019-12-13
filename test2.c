@@ -36,4 +36,5 @@ void main () {
 	}
 	_print(a and b);
 	_print(a or b);
+	whileFunc();
 }

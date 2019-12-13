@@ -1,19 +1,13 @@
 package listener;
 
-//import java.util.Hashtable;
-
 import generated.MiniCParser;
 import generated.MiniCParser.ExprContext;
 import generated.MiniCParser.Fun_declContext;
 import generated.MiniCParser.If_stmtContext;
 import generated.MiniCParser.Local_declContext;
-import generated.MiniCParser.ParamContext;
 import generated.MiniCParser.ParamsContext;
 import generated.MiniCParser.Type_specContext;
 import generated.MiniCParser.Var_declContext;
-
-//import listener.SymbolTable;
-//import listener.SymbolTable.VarInfo;
 
 public class BytecodeGenListenerHelper {
 	
@@ -22,27 +16,10 @@ public class BytecodeGenListenerHelper {
 	static boolean isFunDecl(MiniCParser.ProgramContext ctx, int i) {
 		return ctx.getChild(i).getChild(0) instanceof MiniCParser.Fun_declContext;
 	}
-	
-	// type_spec IDENT '[' ']'
-	static boolean isArrayParamDecl(ParamContext param) {
-		return param.getChildCount() == 4;
-	}
-	
-	// global vars
-	static int initVal(Var_declContext ctx) {
-		return Integer.parseInt(ctx.LITERAL().getText());
-	}
 
 	// var_decl	: type_spec IDENT '=' LITERAL ';
 	static boolean isDeclWithInit(Var_declContext ctx) {
 		return ctx.getChildCount() == 5;
-	}
-	// var_decl	: type_spec IDENT '[' LITERAL ']' ';'
-	static boolean isArrayDecl(Var_declContext ctx) {
-		return ctx.getChildCount() == 6;
-	}
-	static boolean isDecl(Var_declContext ctx) {
-		return ctx.getChildCount() == 3;
 	}
 
 	// <local vars>
@@ -65,17 +42,12 @@ public class BytecodeGenListenerHelper {
 		return ctx.getChildCount() == 3;
 	}
 	
-	static boolean isVoidF(Fun_declContext ctx) {
-		// <Fill in>
-		return ctx.getChildCount() == 0;
+	static boolean noElse(If_stmtContext ctx) {
+		return ctx.getChildCount() == 5;
 	}
 	
-	static boolean isIntReturn(MiniCParser.Return_stmtContext ctx) {
-		return ctx.getChildCount() == 3;
-	}
-
-	static boolean isVoidReturn(MiniCParser.Return_stmtContext ctx) {
-		return ctx.getChildCount() == 2;
+	static boolean isBinaryOperation(MiniCParser.ExprContext ctx) {
+		return ctx.getChildCount() == 3 && ctx.getChild(1) != ctx.expr() && ctx.getChild(0) == ctx.expr(0);
 	}
 	
 	// <information extraction>
@@ -90,12 +62,6 @@ public class BytecodeGenListenerHelper {
 	static String getTypeText(Type_specContext ctx) {
 		// <Fill in>
 		return ctx.getText();
-	}
-
-	// params
-	static String getParamName(ParamContext ctx) {
-		// <Fill in>
-		return ctx.IDENT().getText();
 	}
 	
 	static String getParamTypesText(ParamsContext ctx) {
@@ -123,16 +89,7 @@ public class BytecodeGenListenerHelper {
 		return ctx.IDENT().getText();
 	}
 	
-	static boolean noElse(If_stmtContext ctx) {
-		return ctx.getChildCount() == 5;
-	}
-	
 	static String getFunProlog() {
-		// return ".class public Test .....
-		// ...
-		// invokenonvirtual java/lang/Object/<init>()
-		// return
-		// .end method"
 		return ".class public Test \n"
 				+ ".super java/lang/Object \n"
 				+ "; standard initializer \n\n"

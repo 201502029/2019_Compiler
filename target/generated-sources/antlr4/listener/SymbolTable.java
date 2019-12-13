@@ -2,16 +2,10 @@ package listener;
 
 import java.util.HashMap;
 import java.util.Map;
-//import java.util.Hashtable;
 
 import generated.MiniCParser;
 import generated.MiniCParser.Fun_declContext;
 import generated.MiniCParser.Local_declContext;
-import generated.MiniCParser.Var_declContext;
-//import generated.MiniCParser.ParamsContext;
-//import generated.MiniCParser.Type_specContext;
-
-//import listener.SymbolTable.Type;
 
 import static listener.BytecodeGenListenerHelper.*;
 
@@ -43,10 +37,8 @@ public class SymbolTable {
 	}
 
 	private Map<String, VarInfo> _lsymtable = new HashMap<>();	// local v.
-	private Map<String, VarInfo> _gsymtable = new HashMap<>();	// global v.
 	private Map<String, FInfo> _fsymtable = new HashMap<>();	// function 
 
-	private int _globalVarID = 0;
 	private int _localVarID = 0;
 	private int _labelID = 0;
 	private int _tempVarID = 0;
@@ -77,13 +69,6 @@ public class SymbolTable {
 		}		
 	}
 
-	void putGlobalVar(String varname, Type type){
-		//<Fill here>
-		VarInfo info = new VarInfo(type, _globalVarID);
-		_gsymtable.put(varname, info);
-		_globalVarID++;
-	}
-
 	void putLocalVarWithInitVal(String varname, Type type, int initVar){
 		//<Fill here>
 		if (_lsymtable.containsKey(varname)) {
@@ -96,13 +81,6 @@ public class SymbolTable {
 			_lsymtable.put(varname, info);
 			_localVarID++;
 		}
-	}
-	
-	void putGlobalVarWithInitVal(String varname, Type type, int initVar){
-		//<Fill here>
-		VarInfo info = new VarInfo(type, _globalVarID, initVar);
-		_gsymtable.put(varname, info);
-		_globalVarID++;
 	}
 
 	void putParams(MiniCParser.ParamsContext params) {
@@ -117,9 +95,6 @@ public class SymbolTable {
 			
 			else if (typeStr.contains("void"))
 				type = Type.VOID;
-			
-			else if (typeStr.contains("int[]"))
-				type = Type.INTARRAY;
 			
 			else
 				type = Type.ERROR;
@@ -187,10 +162,6 @@ public class SymbolTable {
 		if (lvar != null)
 			return Integer.toString(lvar.id);
 
-		VarInfo gvar = (VarInfo) _gsymtable.get(name);
-		if (gvar != null)
-			return Integer.toString(gvar.id);
-
 		return null;
 	}
 
@@ -198,11 +169,6 @@ public class SymbolTable {
 		VarInfo lvar = (VarInfo) _lsymtable.get(name);
 		if (lvar != null) {
 			return lvar.type;
-		}
-
-		VarInfo gvar = (VarInfo) _gsymtable.get(name);
-		if (gvar != null) {
-			return gvar.type;
 		}
 
 		return Type.ERROR;	
@@ -215,14 +181,6 @@ public class SymbolTable {
 	String newTempVar() {
 		String id = "";
 		return id + _tempVarID--;
-	}
-
-	// global
-	public String getVarId(Var_declContext ctx) {
-		// <Fill here>
-		String sname = "";
-		sname += getVarId(ctx.IDENT().getText());
-		return sname;
 	}
 
 	// local

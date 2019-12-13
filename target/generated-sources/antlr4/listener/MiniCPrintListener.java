@@ -1,42 +1,27 @@
 package listener;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import generated.*;
+
+import static listener.BytecodeGenListenerHelper.*;
 
 public class MiniCPrintListener extends MiniCBaseListener {
 
 	ParseTreeProperty<String> newTexts = new ParseTreeProperty<String>();
 	private StringBuffer nested = new StringBuffer();
 
-	@Override public void enterProgram(MiniCParser.ProgramContext ctx) {
-
-	}
-
 	@Override public void exitProgram(MiniCParser.ProgramContext ctx) {
 
 		//지금까지 입력된 nexTexts를 출력
 		for (int i = 0; i < ctx.getChildCount(); i++)
 			System.out.println(newTexts.get(ctx.decl(i)));
-		
-		
-	}
-
-	@Override public void enterDecl(MiniCParser.DeclContext ctx) {
-
 	}
 
 	@Override public void exitDecl(MiniCParser.DeclContext ctx) {
 
 		//decl의 자식을 newTexts에 넣어 끝낸다.
 		newTexts.put(ctx, newTexts.get(ctx.getChild(0)));
-	}
-
-	@Override public void enterVar_decl(MiniCParser.Var_declContext ctx) {
-
 	}
 
 	@Override public void exitVar_decl(MiniCParser.Var_declContext ctx) {
@@ -54,23 +39,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			//정의까지 할 때
 			if (ctx.getChildCount() == 5)
 				newTexts.put(ctx, type + " " + id + " = " + literal + ";");
-
-			//배열을 선언 할 때
-			else
-				newTexts.put(ctx, type + " " + id + "[" + literal + "];");
 		}
-	}
-
-	@Override public void enterType_spec(MiniCParser.Type_specContext ctx) {
-
-	}
-
-	@Override public void exitType_spec(MiniCParser.Type_specContext ctx) {
-
-	}
-
-	@Override public void enterFun_decl(MiniCParser.Fun_declContext ctx) {
-
 	}
 
 	@Override public void exitFun_decl(MiniCParser.Fun_declContext ctx) {
@@ -83,10 +52,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 		//값을 알맞게 출력하기 위해 정리해서 넣는다.
 		newTexts.put(ctx, type + " " + name + "(" + params + ")\n" + compound_stmt);
-	}
-
-	@Override public void enterParams(MiniCParser.ParamsContext ctx) {
-
 	}
 
 	@Override public void exitParams(MiniCParser.ParamsContext ctx) {
@@ -102,10 +67,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		newTexts.put(ctx, nested_degree.toString());
 	}
 
-	@Override public void enterParam(MiniCParser.ParamContext ctx) {
-
-	}
-
 	@Override public void exitParam(MiniCParser.ParamContext ctx) {
 
 		String type_spec = ctx.type_spec().getText();
@@ -115,24 +76,12 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		if (ctx.getChildCount() == 2)
 			newTexts.put(ctx, type_spec + " " + id);
 
-		//배열 라파미터
-		else
-			newTexts.put(ctx, type_spec + " " + id + "[]");
-
-	}
-
-	@Override public void enterStmt(MiniCParser.StmtContext ctx) {
-
 	}
 
 	@Override public void exitStmt(MiniCParser.StmtContext ctx) {
 		
 		//stmt의 자식을 저장한다.
 		newTexts.put(ctx, newTexts.get(ctx.getChild(0)));
-	}
-
-	@Override public void enterExpr_stmt(MiniCParser.Expr_stmtContext ctx) { 
-
 	}
 
 	@Override public void exitExpr_stmt(MiniCParser.Expr_stmtContext ctx) {
@@ -142,10 +91,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 		//양식에 맞게 저장
 		newTexts.put(ctx, expr + ";");
-	}
-
-	@Override public void enterWhile_stmt(MiniCParser.While_stmtContext ctx) { 
-		
 	}
 
 	@Override public void exitWhile_stmt(MiniCParser.While_stmtContext ctx) { 
@@ -184,10 +129,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		newTexts.put(ctx, nested + "{\n" + nested_degree + nested + "}");
 	}
 
-	@Override public void enterLocal_decl(MiniCParser.Local_declContext ctx) { 
-		
-	}
-
 	@Override public void exitLocal_decl(MiniCParser.Local_declContext ctx) { 
 
 		String type = ctx.type_spec().getText();
@@ -205,10 +146,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			else
 				newTexts.put(ctx, type + " " + id + "[" + literal + "];");
 		}
-	}
-
-	@Override public void enterIf_stmt(MiniCParser.If_stmtContext ctx) { 
-
 	}
 
 	@Override public void exitIf_stmt(MiniCParser.If_stmtContext ctx) { 
@@ -232,18 +169,6 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			String stmt2 = newTexts.get(ctx.stmt(1));
 			newTexts.put(ctx, "else\n" + stmt2);
 		}
-	}
-
-	@Override public void enterReturn_stmt(MiniCParser.Return_stmtContext ctx) {
-
-	}
-
-	@Override public void exitReturn_stmt(MiniCParser.Return_stmtContext ctx) {
-
-	}
-
-	@Override public void enterExpr(MiniCParser.ExprContext ctx) { 
-
 	}
 
 	@Override public void exitExpr(MiniCParser.ExprContext ctx) {
@@ -297,33 +222,5 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		
 		else if (ctx.getChildCount() == 1)
 			newTexts.put(ctx, ctx.getChild(0).getText());
-	}
-
-	boolean isBinaryOperation(MiniCParser.ExprContext ctx) {
-		return ctx.getChildCount() == 3 && ctx.getChild(1) != ctx.expr() && ctx.getChild(0) == ctx.expr(0);
-	}
-
-	@Override public void enterArgs(MiniCParser.ArgsContext ctx) {
-
-	}
-
-	@Override public void exitArgs(MiniCParser.ArgsContext ctx) { 
-		
-	}
-
-	@Override public void enterEveryRule(ParserRuleContext ctx) { 
-
-	}
-
-	@Override public void exitEveryRule(ParserRuleContext ctx) { 
-
-	}
-
-	@Override public void visitTerminal(TerminalNode node) {
-
-	}
-
-	@Override public void visitErrorNode(ErrorNode node) {
-
 	}
 }
