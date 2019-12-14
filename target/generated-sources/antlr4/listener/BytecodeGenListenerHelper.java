@@ -50,11 +50,6 @@ public class BytecodeGenListenerHelper {
 		return ctx.getChildCount() == 3 && ctx.getChild(1) != ctx.expr() && ctx.getChild(0) == ctx.expr(0);
 	}
 	
-	// <information extraction>
-	static String getStackSize(Fun_declContext ctx) {
-		return "32";
-	}
-	
 	static String getTypeText(Type_specContext ctx) {
 		// <Fill in>
 		return ctx.getText();

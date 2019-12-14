@@ -19,7 +19,7 @@ int max(int a, int b) {
 void whileFunc() {
 	int x = 10;
 	int count = 0;
-	while (x < 15) {
+	while (x > 15) {
 		x = x + 1;
 		count = count + 1;
 	}
