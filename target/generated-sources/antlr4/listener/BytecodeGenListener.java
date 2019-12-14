@@ -149,9 +149,10 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	}
 
 	private String funcHeader(MiniCParser.Fun_declContext ctx, String fname) {
+		int localVarSize = symbolTable.localGetter().size();
 		return ".method public static " + symbolTable.getFunSpecStr(fname) + "\n"	
 				+ ".limit stack " 	+ getStackSize(ctx) + "\n"
-				+ ".limit locals " 	+ getLocalVarSize(ctx) + "\n";
+				+ ".limit locals " 	+ Integer.toString(localVarSize) + "\n";
 	}
 
 	// var_decl	:  type_spec IDENT ';'	| type_spec IDENT '=' LITERAL ';'	| type_spec IDENT '[' LITERAL ']' ';'	;
@@ -318,7 +319,6 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		}
 		return expr;
 	}
-
 
 	private String handleBinExpr(MiniCParser.ExprContext ctx, String expr) {
 		String lstart = symbolTable.newLabel();

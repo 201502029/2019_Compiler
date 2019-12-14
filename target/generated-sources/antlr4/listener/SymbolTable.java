@@ -38,6 +38,10 @@ public class SymbolTable {
 
 	private Map<String, VarInfo> _lsymtable = new HashMap<>();	// local v.
 	private Map<String, FInfo> _fsymtable = new HashMap<>();	// function 
+	
+	public Map<String, VarInfo> localGetter() {
+		return _lsymtable;
+	}
 
 	private int _localVarID = 0;
 	private int _labelID = 0;

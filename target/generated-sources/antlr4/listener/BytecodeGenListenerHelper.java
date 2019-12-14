@@ -55,10 +55,6 @@ public class BytecodeGenListenerHelper {
 		return "32";
 	}
 	
-	static String getLocalVarSize(Fun_declContext ctx) {
-		return "32";
-	}
-	
 	static String getTypeText(Type_specContext ctx) {
 		// <Fill in>
 		return ctx.getText();
